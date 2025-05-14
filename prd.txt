@@ -1,0 +1,94 @@
+개요
+본 PRD(Product Requirements Document)는 AI 기반 웹 프로젝트의 전반적인 기능 및 요구사항을 상세히 기술하여, AI가 각 작업(Task)을 분해하고 구체적인 구현 계획을 수립할 수 있도록 작성되었다.
+
+1. 목표
+- 사용자에게 코드 리뷰, IDE, 알고리즘 문제 추천, 암기 퀴즈, Git 연습, Spring Boot 최적화 연습 등 일련의 학습·개발 도구를 통합 제공
+- AI를 활용하여 각 기능을 자동화·지능화하고, 개발 생산성과 학습 효율 극대화
+- 반응형 웹·OAuth2 로그인·Docker격리 실행 환경 등 모던 웹 아키텍처 준수
+
+2. 주요 기능
+1) 코드 리뷰어
+   - 사용자가 업로드하거나 붙여넣은 코드를 정적·동적 분석하여 스타일, 성능, 보안·오류 가능성을 지적
+   - AI: OpenAI/Claude API를 이용한 자연어 리뷰 및 Linter 연동
+
+2) AI 코딩 IDE
+   - 웹 기반 코드 편집기 제공, 자동완성 토글 기능
+   - AI: 코드 완성·에러 예측 모델 적용
+
+3) 알고리즘 문제 추천 시스템
+   - 백준·프로그래머스·코드트리 문제를 카테고리별 분류, 사용자 티어에 맞춰 난이도 추천
+   - AI: 사용자 레벨 예측 및 유사도 매칭
+
+4) 암기 도우미
+   - 업로드된 학습 자료(텍스트·PDF) 자동 분석 후 객관식·주관식 문제 생성
+   - AI: 문서 요약·QA 생성 API 활용
+
+5) Git 커맨드 연습 기능
+   - 가상 터미널에서 Git 명령어 실습, 잘못된 입력 시 피드백 제공
+   - AI: 정답 패턴 매칭 및 오류 예측
+
+6) Spring Boot 코드 최적화 문제 생성기
+   - 비효율 코드 예제 제시, 개선 전·후 실행 시간 비교 보고서 제공
+   - AI: 코드 패턴 분석 및 리팩토링 가이드 생성
+
+3. 사용자 시나리오
+- 코드 리뷰어: “자바 코드 스니펫을 붙여넣고 ‘리뷰 요청’ 클릭” -> AI 분석 후 이슈 리스트 반환
+- AI 코딩 IDE: “자동완성 켜기/끄기” -> 설정에 따라 제안 활성화
+- 문제 추천: “내 백준 티어 5, 오늘 문제 추천” -> 3문제 추천
+- 암기 도우미: “영단어 리스트 PDF 업로드” -> 문제 10개 생성
+- Git 연습: “git commit” 입력 -> 잘못된 옵션 감지 및 안내
+- 코드 최적화: “비효율 코드 보기” -> 개선 전·후 시간 차트 표시
+
+4. 시스템 아키텍처
+[React Frontend] ←→ [Spring Boot Backend] ←→ [AI API]
+                                  ↘ [Docker Execution Engine]
+
+5. 기술 스택
+- Frontend: React, TypeScript, Monaco Editor, Tailwind CSS
+- Backend: Spring Boot, Java 17, Spring Security, JPA
+- AI 서비스: OpenAI API 또는 Claude API
+- 실행 환경: Docker, Kubernetes(Optional)
+- DB: PostgreSQL
+- 인증: OAuth2(Google) + JWT
+
+6. API 명세 (예시)
+POST /api/review
+Body: { "language":"java", "code":"..." }
+Response: { "issues":[{"type":"style","line":12,"message":"불필요한 import"},...] }
+
+GET /api/recommend?site=baekjoon&tier=5&category=dp
+Response: [{"id":15988,"title":"1,2,3 더하기","level":"Silver II","url":"..."}, ...]
+
+7. 데이터 모델
+User { id, email, nickname, tierBaekjoon, levelProgrammers, createdAt, updatedAt }
+ReviewRequest { id, userId(FK), language, code, requestedAt, status }
+Problem { id, site, title, category, level, url }
+Quiz { id, userId, sourceDoc, createdAt, questions }
+Question { id, quizId, type, prompt, options?, answer }
+
+8. UI/UX 가이드라인
+- 반응형: 모바일·태블릿·데스크톱 지원
+- 주요 화면: 로그인, 대시보드, 리뷰 에디터, IDE, 문제 리스트, 퀴즈, Git 콘솔, 최적화 리포트
+
+9. 비기능 요구사항
+- 보안: OAuth2, HTTPS 필수
+- 성능: 코드 실행 응답 ≤5초, AI 응답 ≤3초
+- 확장성: 컨테이너 노드 확장 가능
+- 유지보수: 모듈화, Swagger 문서
+- 로깅/모니터링: Prometheus/Grafana
+
+10. 개발 일정
+1주차: 요구·설계
+2-3주차: 인증·인프라
+4-6주차: 리뷰어·IDE 개발
+7-8주차: 추천·암기 도우미 개발
+9주차: Git·최적화 모듈 개발
+10주차: 통합 테스트
+11주차: UI 개선·문서화
+12주차: 배포·모니터링
+
+11. 위험 관리
+- AI 응답 품질: 프롬프트 튜닝, 캐싱
+- 실행 격리: Docker 스캔
+- API 한도: 큐·백오프 설계
+- 데이터 프라이버시: 암호화 저장

@@ -1,0 +1,154 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+lerna-debug.log*
+
+# Dependency directories
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Security and keys
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.pub
+id_rsa*
+*.gpg
+*.password
+*.secret
+*.token
+aws.json
+google-credentials.json
+firebase-credentials.json
+*credentials*.json
+*credential*.json
+*secret*.json
+*secrets*.json
+*apikey*.json
+*api-key*.json
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# OS specific
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Build and compiled files
+/build/
+/dist/
+/out/
+/target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Logs and databases
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.dump
+
+# TaskMaster 관련 파일
+.taskmasterconfig
+tasks.json
+tasks/
+task_*.txt
+task_*.md
+scripts/task-complexity-report.json
+korean-taskmaster*
+taskmaster-*.md
+.cursor/
+.cursor/rules/
+.roo/
+.roomodes
+.windsurfrules
+2025-05-14_v0.1.md
+
+# Coverage and test reports
+/coverage/
+/.nyc_output
+/cypress/videos/
+/cypress/screenshots/
+
+# Cache and temporary files
+.cache/
+.temp/
+.tmp/
+temp/
+tmp/
+.eslintcache
+.stylelintcache
+.sass-cache/
+
+# Docker related
+.dockerignore
+docker-compose.override.yml
+
+# Package manager files
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+.pnpm-store/
+
+# Spring Boot specific
+META-INF/
+*.properties
+!src/main/resources/application.properties
+!src/main/resources/application-example.properties
+application-*.properties
+application-*.yml
+!application-example.yml
+!application-example.properties
+
+# Compiled Java classes
+*.class
+
+# Maven specific
+target/
+
+# Gradle specific
+.gradle/
+build/
+
+# Personal configuration files
+*.personal.*
+*personal*.*
+tasks/ 
