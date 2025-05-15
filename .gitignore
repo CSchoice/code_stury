@@ -162,3 +162,18 @@ docker/mysql/logs/
 *personal*.*
 tasks/
 scripts/prd.txt
+database-schema-v2.md
+key_test.py
+run-taskmaster.sh
+package.json
+backend/remove_comments.sh
+run-taskmaster.ps1
+update-package.ps1
+backend/remove_comments_enhanced.sh
+backend/remove_all_comments.sh
+
+# Added by Claude Task Master
+# Environment variables
+.idea
+.vscode
+# Task files
