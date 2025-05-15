@@ -121,6 +121,7 @@ tmp/
 # Docker related
 .dockerignore
 docker-compose.override.yml
+docker/
 
 # Package manager files
 yarn.lock
@@ -148,7 +149,16 @@ target/
 .gradle/
 build/
 
+# WindSurf configuration
+.windsurf/
+
+# Docker data directories
+docker/mysql/data/
+docker/mysql/conf/
+docker/mysql/logs/
+
 # Personal configuration files
 *.personal.*
 *personal*.*
-tasks/ 
+tasks/
+scripts/prd.txt
