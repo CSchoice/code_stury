@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.flywaydb.flyway' version '10.20.1'
 }
 
 group = 'stquokka'
@@ -17,16 +18,65 @@ repositories {
 	mavenCentral()
 }
 
+// .env 파일 로드
+def env = new Properties()
+def envFile = file(".env")
+if (envFile.exists()) {
+    envFile.withInputStream { env.load(it) }
+}
+
+flyway {
+	url = "jdbc:mysql://127.0.0.1:3306/mydb?allowPublicKeyRetrieval=true&useSSL=false"
+	user = "user"
+	password = "password"
+	locations = ['classpath:db/migration']
+	cleanDisabled = false
+    driver = 'com.mysql.cj.jdbc.Driver'
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.flywaydb:flyway-core'
-	implementation 'org.flywaydb:flyway-mysql'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	implementation 'org.flywaydb:flyway-core:10.20.1'
+	implementation 'org.flywaydb:flyway-mysql:10.20.1'
 	implementation 'org.hibernate.validator:hibernate-validator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.hibernate:hibernate-core:6.4.4.Final'
 	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'io.github.cdimascio:dotenv-java:2.3.2'
+	implementation 'mysql:mysql-connector-java:8.0.33'
+
+	// AWS S3 라이브러리
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.529'
+	implementation 'software.amazon.awssdk:s3:2.20.162'
+	implementation 'software.amazon.awssdk:s3-transfer-manager:2.20.162'
+
+	// Elasticsearch 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	implementation 'org.jetbrains:annotations:24.0.1'
+
+	// Kafka 라이브러리
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.apache.kafka:kafka-clients'
+	implementation 'org.apache.kafka:kafka-streams'
+
+	// Swagger/OpenAPI 라이브러리
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+	// WebClient 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

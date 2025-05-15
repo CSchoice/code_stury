@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: codeStudy
+  
+  # 데이터베이스 설정
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+  # Redis 설정
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      
+  # Elasticsearch 설정
+  elasticsearch:
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
+    uris: ${ELASTICSEARCH_URIS}
+  
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  
+  flyway:
+    enabled: false
+  
+  # OAuth2 설정
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: email,profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  
+  # CORS 설정
+  graphql:
+    cors:
+      allowed-origins: http://localhost:3000
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+      allowed-headers: "*"
+      exposed-headers: Authorization
+      allowed-credentials: true
+      one-hour: 3600
+
+# JWT 설정
+jwt:
+  secretKey: ${JWT_SECRET}
+  accessTokenExp: 86400000
+  refreshTokenExp: 1209600000
+
+# AWS S3 설정
+cloud:
+  aws:
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
+    region:
+      staticRegion: ${S3_REGION}
+    s3:
+      bucket: ${S3_BUCKET}
