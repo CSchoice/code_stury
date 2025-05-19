@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import stquokka.codeStudy.domain.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "problem_submissions")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -59,6 +61,7 @@ public class ProblemSubmission {
     
     @ElementCollection
     @CollectionTable(name = "test_case_results", joinColumns = @JoinColumn(name = "submission_id"))
+    @Builder.Default
     private List<TestCaseResult> testCaseResults = new ArrayList<>();
     
     @PrePersist

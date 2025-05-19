@@ -1,21 +1,16 @@
-package stquokka.codeStudy.config.repository;
-
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-/**
- * JPA 저장소 설정
- * JPA 저장소로 사용할 패키지를 명시적으로 지정하여 Spring Data Redis와의 충돌을 방지합니다.
- */
-@Configuration
-@EnableJpaRepositories(basePackages = {
-    "stquokka.codeStudy.domain.community.repository",
-    "stquokka.codeStudy.domain.currency.repository",
-    "stquokka.codeStudy.domain.education.repository",
-    "stquokka.codeStudy.domain.user.repository",
-    "stquokka.codeStudy.domain.chat.repository"
-    // 여기에 다른 JPA 저장소 패키지를 추가
-})
-public class JpaRepositoryConfig {
-    // JPA 관련 추가 설정이 필요한 경우 여기에 작성
-}
+//package stquokka.codeStudy.config.repository;
+//
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+//
+///**
+// * JPA 저장소 설정
+// * JPA 저장소로 사용할 패키지를 명시적으로 지정하여 Spring Data Redis와의 충돌을 방지합니다.
+// */
+//@Configuration
+//@EnableJpaRepositories(basePackages = {
+//    // 여기에 다른 JPA 저장소 패키지를 추가
+//})
+//public class JpaRepositoryConfig {
+//    // JPA 관련 추가 설정이 필요한 경우 여기에 작성
+//}

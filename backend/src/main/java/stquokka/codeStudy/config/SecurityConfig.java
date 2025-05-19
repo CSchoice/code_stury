@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(AUTHENTICATED_ONLY).authenticated() // 내부 상수 사용
                         .requestMatchers("/actuator/prometheus").hasRole("PROMETHEUS")  // Prometheus 역할 접근 권한 설정
                         .requestMatchers("/actuator/**").hasRole("ADMIN")
-                        .requestMatchers(PathRequest.toH2Console()).permitAll()
+//                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().permitAll())
                 .addFilterAt(jwtAuthenticationFilter, BasicAuthenticationFilter.class) // addFilterAt으로 위치 지정
                 .addFilterBefore(new CacheControlFilter(), JwtAuthenticationFilter.class) // CacheControlFilter 추가

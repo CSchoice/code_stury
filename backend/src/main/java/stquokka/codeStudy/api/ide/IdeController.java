@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import stquokka.codeStudy.api.CommonResponse;
 import stquokka.codeStudy.api.ide.request.CodeExecutionRequest;
 import stquokka.codeStudy.api.ide.response.CodeExecutionResponse;
-import stquokka.codeStudy.domain.ide.service.CodeExecutionResult;
+import stquokka.codeStudy.domain.ide.command.CodeExecutionResult;
 import stquokka.codeStudy.domain.ide.service.IdeService;
 import stquokka.codeStudy.domain.user.entity.User;
 
@@ -47,6 +47,6 @@ public class IdeController {
                 .memoryUsedMb(result.getMemoryUsed())
                 .build();
         
-        return ResponseEntity.ok(new CommonResponse<>(response));
+        return ResponseEntity.ok(CommonResponse.ok(response));
     }
 }

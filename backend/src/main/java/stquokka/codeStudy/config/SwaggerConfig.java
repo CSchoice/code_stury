@@ -35,16 +35,16 @@ public class SwaggerConfig {
 
     private Info info() {
         return new Info()
-                .title("horong Client API")
+                .title("")
                 .version("v1")
-                .description("SSAFY A108 horong Client API Document")
+                .description("")
                 .license(license());
     }
 
     private License license() {
         return new License()
-                .url("https://lab.ssafy.com/s11-final/S11P31A108")
-                .name("A108");
+                .url("")
+                .name("");
     }
 
     private SecurityScheme securityScheme() {

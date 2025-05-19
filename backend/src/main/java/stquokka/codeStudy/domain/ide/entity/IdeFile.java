@@ -5,12 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ide_files")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,6 +36,7 @@ public class IdeFile {
     private LocalDateTime updatedAt;
     
     @OneToMany(mappedBy = "file", cascade = CascadeType.ALL)
+    @Builder.Default
     private java.util.List<CodeExecutionLog> executionLogs = new java.util.ArrayList<>();
     
     @PrePersist

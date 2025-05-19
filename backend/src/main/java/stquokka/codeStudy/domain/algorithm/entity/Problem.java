@@ -51,6 +51,7 @@ public class Problem {
         joinColumns = @JoinColumn(name = "problem_id"),
         inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @Builder.Default
     private Set<Category> categories = new HashSet<>();
     
     public enum ProblemSource {

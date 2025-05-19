@@ -3,6 +3,7 @@ package stquokka.codeStudy.domain.ide.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stquokka.codeStudy.api.ide.response.SubmissionResponse;
+import stquokka.codeStudy.domain.ide.command.CodeExecutionResult;
 import stquokka.codeStudy.domain.ide.entity.CodingProblem;
 import stquokka.codeStudy.domain.ide.entity.TestCase;
 import stquokka.codeStudy.domain.user.entity.User;

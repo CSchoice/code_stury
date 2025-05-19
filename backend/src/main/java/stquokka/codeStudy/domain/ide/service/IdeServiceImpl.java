@@ -19,6 +19,7 @@ import stquokka.codeStudy.domain.ide.repository.CodingProblemRepository;
 import stquokka.codeStudy.domain.ide.repository.IdeFileRepository;
 import stquokka.codeStudy.domain.ide.repository.IdeSessionRepository;
 import stquokka.codeStudy.domain.ide.repository.ProblemSubmissionRepository;
+import stquokka.codeStudy.domain.ide.command.CodeExecutionResult;
 import stquokka.codeStudy.domain.ide.repository.TestCaseRepository;
 import stquokka.codeStudy.domain.user.entity.User;
 
@@ -207,9 +208,25 @@ public class IdeServiceImpl implements IdeService {
     @Transactional
     public void deactivateProblem(Long problemId) {
         CodingProblem problem = getProblem(problemId);
-        problem.setActive(false);
-        problem.setUpdatedAt(LocalDateTime.now());
-        problemRepository.save(problem);
+        // 빌더 패턴으로 새 객체를 만들어 대체
+        CodingProblem updatedProblem = CodingProblem.builder()
+            .id(problem.getId())
+            .title(problem.getTitle())
+            .description(problem.getDescription())
+            .inputDescription(problem.getInputDescription())
+            .outputDescription(problem.getOutputDescription())
+            .constraints(problem.getConstraints())
+            .difficulty(problem.getDifficulty())
+            .categories(problem.getCategories())
+            .timeLimitSeconds(problem.getTimeLimitSeconds())
+            .memoryLimitMb(problem.getMemoryLimitMb())
+            .sampleCode(problem.getSampleCode())
+            .testCases(problem.getTestCases())
+            .createdAt(problem.getCreatedAt())
+            .updatedAt(LocalDateTime.now())
+            .isActive(false)
+            .build();
+        problemRepository.save(updatedProblem);
     }
     
     //-------------------------------------------------------------------------
@@ -261,12 +278,14 @@ public class IdeServiceImpl implements IdeService {
                 }
                 
                 // 실행 결과 읽기
-                java.util.Scanner s = new java.util.Scanner(process.getInputStream()).useDelimiter("\\A");
-                output = s.hasNext() ? s.next() : "";
+                try (java.util.Scanner inputScanner = new java.util.Scanner(process.getInputStream()).useDelimiter("\\A")) {
+                    output = inputScanner.hasNext() ? inputScanner.next() : "";
+                }
                 
                 // 오류 읽기
-                s = new java.util.Scanner(process.getErrorStream()).useDelimiter("\\A");
-                error = s.hasNext() ? s.next() : null;
+                try (java.util.Scanner errorScanner = new java.util.Scanner(process.getErrorStream()).useDelimiter("\\A")) {
+                    error = errorScanner.hasNext() ? errorScanner.next() : null;
+                }
                 
                 executionTime = 100L; // 실제로는 측정해야 함
                 memoryUsed = 50.0f; // 실제로는 측정해야 함
@@ -574,10 +593,10 @@ public class IdeServiceImpl implements IdeService {
      * 코드 실행용 임시 세션 생성
      */
     private IdeSession createTemporarySession() {
+        // 테스트용 임시 세션 생성
         IdeSession session = IdeSession.builder()
                 .sessionId(UUID.randomUUID().toString())
-                .createdAt(LocalDateTime.now())
-                .lastAccessedAt(LocalDateTime.now())
+                .startedAt(LocalDateTime.now())
                 .build();
         
         return sessionRepository.save(session);
@@ -594,7 +613,7 @@ public class IdeServiceImpl implements IdeService {
                 .session(session)
                 .filename(filename)
                 .content(code)
-                .lastModified(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         
         return fileRepository.save(file);

@@ -58,7 +58,7 @@ public class CodingProblemController {
                 .categories(p.getCategories())
                 .build());
         
-        return ResponseEntity.ok(new CommonResponse<>(response));
+        return ResponseEntity.ok(CommonResponse.ok(response));
     }
     
     @Operation(summary = "문제 상세 조회", description = "코딩 문제의 상세 정보를 조회합니다")
@@ -92,7 +92,7 @@ public class CodingProblemController {
                 .sampleTestCases(testCaseResponses)
                 .build();
         
-        return ResponseEntity.ok(new CommonResponse<>(response));
+        return ResponseEntity.ok(CommonResponse.ok(response));
     }
     
     @Operation(summary = "문제 생성", description = "새로운 코딩 문제를 생성합니다")
@@ -116,7 +116,7 @@ public class CodingProblemController {
                 request.getSampleCode()
         );
         
-        return ResponseEntity.ok(new CommonResponse<>(problem.getId()));
+        return ResponseEntity.ok(CommonResponse.ok(problem.getId()));
     }
     
     @Operation(summary = "테스트 케이스 추가", description = "코딩 문제에 테스트 케이스를 추가합니다")
@@ -138,7 +138,7 @@ public class CodingProblemController {
                 request.getTestNumber()
         );
         
-        return ResponseEntity.ok(new CommonResponse<>(testCase.getId()));
+        return ResponseEntity.ok(CommonResponse.ok(testCase.getId()));
     }
     
     @Operation(summary = "문제 제출", description = "코딩 문제 해결을 위한 코드를 제출합니다")
@@ -162,7 +162,7 @@ public class CodingProblemController {
                 .submissionId(submissionId)
                 .build();
         
-        return ResponseEntity.ok(new CommonResponse<>(response));
+        return ResponseEntity.ok(CommonResponse.ok(response));
     }
     
     @Operation(summary = "제출 결과 조회", description = "코드 제출 결과를 조회합니다")
@@ -174,7 +174,7 @@ public class CodingProblemController {
         
         SubmissionResponse response = ideService.getSubmissionResult(submissionId, user);
         
-        return ResponseEntity.ok(new CommonResponse<>(response));
+        return ResponseEntity.ok(CommonResponse.ok(response));
     }
     
     @Operation(summary = "내 제출 기록 조회", description = "사용자의 문제 제출 기록을 조회합니다")
@@ -191,6 +191,6 @@ public class CodingProblemController {
                 pageable
         );
         
-        return ResponseEntity.ok(new CommonResponse<>(submissions));
+        return ResponseEntity.ok(CommonResponse.ok(submissions));
     }
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "coding_problems")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,6 +52,7 @@ public class CodingProblem {
     @ElementCollection
     @CollectionTable(name = "problem_categories", joinColumns = @JoinColumn(name = "problem_id"))
     @Column(name = "category")
+    @Builder.Default
     private List<String> categories = new ArrayList<>();
     
     @Column(name = "created_at", nullable = false)
@@ -62,6 +65,7 @@ public class CodingProblem {
     private String sampleCode;
     
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<TestCase> testCases = new ArrayList<>();
     
     @Column(name = "is_active", nullable = false)
