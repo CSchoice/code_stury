@@ -18,7 +18,7 @@ def create_tables(conn):
             # 코딩 문제 테이블 생성
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS coding_problems (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                id BIGINT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 description LONGTEXT,
                 input_description LONGTEXT,
@@ -185,8 +185,16 @@ def main():
     try:
         # 직접 특정 파일을 지정한 경우
         if args.file:
+            # 직접 파일이 존재하는지 확인
             if os.path.exists(args.file):
                 sql_files = [args.file]
+            # 파일명에 와일드카드(*)가 있는지 확인
+            elif '*' in args.file:
+                # glob 패턴을 사용하여 파일 찾기
+                sql_files = glob.glob(args.file)
+                if not sql_files:
+                    print(f"'{args.file}' 패턴과 일치하는 파일을 찾을 수 없습니다.")
+                    return
             else:
                 print(f"'{args.file}' 파일을 찾을 수 없습니다.")
                 return

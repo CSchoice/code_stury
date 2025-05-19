@@ -30,7 +30,7 @@ def main():
     print("문제 크롤링을 시작합니다...")
     all_problems = []
     
-    # 백준 문제 크롤링 (100개씩 분할)
+    # 백준 문제 크롤링 (배치 단위로 병렬화)
     if not args.no_boj:
         print(f"백준 문제 크롤링 (범위: {args.boj_start}~{args.boj_end})")
         
@@ -38,22 +38,33 @@ def main():
         start_id = args.boj_start
         batch_count = math.ceil((args.boj_end - args.boj_start + 1) / args.batch_size)
         
-        baekjoon_crawler = BaekjoonCrawler()
+        # 최대 병렬 작업은 배치 수와 지정된 max_workers 중 작은 값
+        max_parallel = min(batch_count, args.max_workers)
+        print(f"최대 병렬 작업 수: {max_parallel} (총 {batch_count}개 배치)")
         
+        # 배치 정보 저장
+        batches = []
         for batch in range(batch_count):
             batch_start = start_id + (batch * args.batch_size)
             batch_end = min(batch_start + args.batch_size - 1, args.boj_end)
+            batches.append((batch_start, batch_end, batch+1, batch_count))
+        
+        baekjoon_crawler = BaekjoonCrawler()
+        all_batch_problems = []
+        
+        # 배치 병렬 처리
+        from concurrent.futures import ThreadPoolExecutor
+        from tqdm import tqdm
+        
+        # 배치 처리 함수
+        def process_batch(batch_info):
+            batch_start, batch_end, batch_num, total_batches = batch_info
+            print(f"백준 배치 {batch_num}/{total_batches} 크롤링 중 (범위: {batch_start}~{batch_end})")
             
-            print(f"백준 배치 {batch+1}/{batch_count} 크롤링 중 (범위: {batch_start}~{batch_end})")
+            # 각 배치는 각 문제를 순차 처리 (병렬화는 배치 단위로 이루어짐)
+            problems = baekjoon_crawler.crawl_problems(batch_start, batch_end, 1)
             
-            # 현재 배치 크롤링 - 이제 배치 사이즈가 병렬 작업 수를 결정
-            # 배치 크기를 기본 병렬 작업 수로 사용하고, max_workers가 지정되면 오버라이드
-            workers_to_use = batch_end - batch_start + 1  # 기본적으로 배치 크기만큼 병렬 작업
-            if args.max_workers < workers_to_use:
-                workers_to_use = args.max_workers  # max_workers가 있으면 제한
-                
-            print(f"병렬 작업 수: {workers_to_use}")
-            problems = baekjoon_crawler.crawl_problems(batch_start, batch_end, workers_to_use)
+            # 배치 결과 저장
             if problems:
                 # 현재 배치 저장
                 batch_json_file = os.path.join(args.output_dir, f"baekjoon_{batch_start}_{batch_end}.json")
@@ -67,12 +78,24 @@ def main():
                 sql_exporter = SqlExporter(batch_sql_file)
                 sql_exporter.export(problems)
                 
-                all_problems.extend(problems)
-                print(f"백준 배치 {batch+1}/{batch_count} - {len(problems)}개 문제 크롤링 및 저장 완료")
+                print(f"백준 배치 {batch_num}/{total_batches} - {len(problems)}개 문제 크롤링 및 저장 완료")
+                return problems
             else:
-                print(f"백준 배치 {batch+1}/{batch_count} - 크롤링된 문제가 없습니다.")
+                print(f"백준 배치 {batch_num}/{total_batches} - 크롤링된 문제가 없습니다.")
+                return []
+                
+        # 병렬 배치 처리 실행
+        with ThreadPoolExecutor(max_workers=max_parallel) as executor:
+            futures = [executor.submit(process_batch, batch_info) for batch_info in batches]
+            for future in tqdm(as_completed(futures), total=len(batches), desc="백준 배치 처리"):
+                try:
+                    batch_problems = future.result()
+                    all_batch_problems.extend(batch_problems)
+                except Exception as e:
+                    print(f"배치 처리 중 오류 발생: {e}")
         
-        print(f"백준 문제 총 {len(all_problems)}개 크롤링 완료")
+        print(f"백준 문제 총 {len(all_batch_problems)}개 크롤링 완료")
+        all_problems = all_batch_problems
     
     # 프로그래머스 문제 크롤링
     programmers_problems = []

@@ -17,35 +17,37 @@ class SqlExporter:
             f.write("-- 백준 & 프로그래머스 문제 데이터\n")
             f.write("-- 생성일: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n")
             
-            # 카테고리 삽입
+            # 카테고리 추출 (삽입은 하지 않음 - 이제 problem_categories에 직접 이름 저장)
             categories = self._extract_categories(problems)
             
-            f.write("-- 카테고리 데이터\n")
-            for i, category in enumerate(categories, 1):
-                safe_category = category.replace("'", "''")
-                f.write(f"INSERT INTO categories (id, name) VALUES ({i}, '{safe_category}');\n")
+            f.write("-- 카테고리 정보\n")
+            f.write(f"-- 총 {len(categories)}개의 카테고리: {', '.join(sorted(categories))}\n\n")
             
             f.write("\n-- 문제 데이터\n")
-            for i, problem in enumerate(problems, 1):
-                self._write_problem_sql(f, i, problem)
             
-            f.write("\n-- 테스트 케이스 데이터\n")
-            test_case_id = 1
-            for i, problem in enumerate(problems, 1):
-                for test_case in problem.test_cases:
-                    self._write_test_case_sql(f, test_case_id, i, test_case)
-                    test_case_id += 1
+            # AUTO_INCREMENT 설정 관련 코드 추가
+            f.write("-- ID 값의 자동 증가를 활성화하고 LAST_INSERT_ID() 함수를 사용하여 카테고리 연결\n")
             
-            category_map = {cat: i for i, cat in enumerate(categories, 1)}
-            f.write("\n-- 문제-카테고리 연결 데이터\n")
-            rel_id = 1
-            
-            for i, problem in enumerate(problems, 1):
-                for category in problem.categories:
-                    cat_id = category_map.get(category)
-                    if cat_id:
-                        f.write(f"INSERT INTO problem_categories (problem_id, category_id) VALUES ({i}, {cat_id});\n")
-                        rel_id += 1
+            for i, problem in enumerate(problems):
+                # 외부 ID를 정수로 변환
+                external_id = problem.external_id
+                problem_id = int(external_id) if external_id.isdigit() else 0
+                
+                # 문제 SQL 작성 (external_id를 ID로 사용)
+                self._write_problem_sql(f, problem)
+                
+                # 현재 문제의 카테고리 바로 삽입 (external_id 사용)
+                if problem.categories:
+                    f.write("\n-- 해당 문제의 카테고리 연결\n")
+                    for category in problem.categories:
+                        safe_category = category.replace("'", "''")
+                        f.write(f"INSERT INTO problem_categories (problem_id, category) VALUES ({problem_id}, '{safe_category}');\n")
+                
+                # 테스트 케이스 바로 삽입 (external_id 사용)
+                if problem.test_cases:
+                    f.write("\n-- 해당 문제의 테스트 케이스\n")
+                    for j, test_case in enumerate(problem.test_cases):
+                        self._write_test_case_sql(f, problem_id, j+1, test_case)
         
         print(f"SQL 삽입문을 {self.filename}에 저장했습니다.")
     
@@ -57,8 +59,8 @@ class SqlExporter:
                 categories.add(category)
         return categories
     
-    def _write_problem_sql(self, file, id: int, problem: Problem) -> None:
-        """문제 SQL 삽입문 작성"""
+    def _write_problem_sql(self, file, problem: Problem) -> None:
+        """문제 SQL 삽입문 작성 (externalId를 ID로 사용)"""
         source = problem.source
         external_id = problem.external_id.replace("'", "''")
         title = problem.title.replace("'", "''")
@@ -74,30 +76,34 @@ class SqlExporter:
         updated_at = problem.updated_at
         is_active = 1 if problem.is_active else 0
         
+        # external_id를 정수로 변환하여 ID로 사용
+        problem_id = int(external_id) if external_id.isdigit() else 0
+        
         sql = f"""INSERT INTO coding_problems (
             id, title, description, input_description, output_description, 
             constraints, difficulty, time_limit_seconds, memory_limit_mb, 
             sample_code, created_at, updated_at, is_active
         ) VALUES (
-            {id}, '{title}', '{description}', '{input_desc}', '{output_desc}', 
+            {problem_id}, '{title}', '{description}', '{input_desc}', '{output_desc}', 
             '{constraints}', '{difficulty}', {time_limit}, {memory_limit}, 
             '{sample_code}', '{created_at}', '{updated_at}', {is_active}
-        );\n"""
+        );
+"""
         file.write(sql)
     
-    def _write_test_case_sql(self, file, id: int, problem_id: int, test_case: TestCase) -> None:
-        """테스트 케이스 SQL 삽입문 작성"""
-        test_number = test_case.test_number
-        input_text = test_case.input.replace("'", "''")
-        expected_output = test_case.expected_output.replace("'", "''")
+    def _write_test_case_sql(self, file, problem_id: int, test_number: int, test_case: TestCase) -> None:
+        """테스트 케이스 SQL 삽입문 작성 (problem_id 직접 사용)"""
+        test_number = test_case.test_number or test_number
+        input_text = (test_case.input or "").replace("'", "''")
+        expected_output = (test_case.expected_output or "").replace("'", "''")
         is_sample = 1 if test_case.is_sample else 0
         is_hidden = 1 if test_case.is_hidden else 0
         explanation = (test_case.explanation or "").replace("'", "''")
         
         sql = f"""INSERT INTO test_cases (
-            id, problem_id, test_number, input, expected_output, is_sample, is_hidden, explanation
+            problem_id, test_number, input, expected_output, is_sample, is_hidden, explanation
         ) VALUES (
-            {id}, {problem_id}, {test_number}, '{input_text}', '{expected_output}', 
-            {is_sample}, {is_hidden}, '{explanation}'
-        );\n"""
+            {problem_id}, {test_number}, '{input_text}', '{expected_output}', {is_sample}, {is_hidden}, '{explanation}'
+        );
+"""
         file.write(sql)

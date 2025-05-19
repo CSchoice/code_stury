@@ -28,6 +28,7 @@ class BaekjoonCrawler:
             response = requests.get(f"{self.SOLVED_API_URL}{problem_id}", headers=self.headers)
             if response.status_code == 200:
                 data = response.json()
+                # print(data)
                 level = data.get('level', 0)  # 실제 난이도 (1~30)
                 
                 # 난이도를 수치화하여 그대로 저장
@@ -36,12 +37,22 @@ class BaekjoonCrawler:
                 # 태그 추출
                 tags = []
                 for tag in data.get('tags', []):
-                    # 'displayNames'의 첫 번째 항목의 'name' 추출 (한국어 태그명)
+                    # 한국어 태그명 추출
                     display_names = tag.get('displayNames', [])
                     if display_names:
-                        tag_name = display_names[0].get('name', '')
-                        if tag_name:
-                            tags.append(tag_name)
+                        # 한국어(ko) 항목 찾기
+                        ko_tag = None
+                        for display_name in display_names:
+                            if display_name.get('language') == 'ko':
+                                ko_tag = display_name.get('name', '')
+                                break
+                        
+                        # 한국어 태그가 없으면 첫 번째 항목 사용
+                        if not ko_tag:
+                            ko_tag = display_names[0].get('name', '')
+                            
+                        if ko_tag:
+                            tags.append(ko_tag)
                 
                 return difficulty, tags, level
             
@@ -130,7 +141,8 @@ class BaekjoonCrawler:
                 output_description=output_desc,
                 constraints="",  # 백준은 제약 조건이 분리되어 있지 않음
                 sample_code=None,  # 백준은 기본 예제 코드를 제공하지 않음
-                test_cases=test_cases
+                test_cases=test_cases,
+                
             )
             
             # 메모리 및 시간 제한 설정 - 테이블에서 추출
