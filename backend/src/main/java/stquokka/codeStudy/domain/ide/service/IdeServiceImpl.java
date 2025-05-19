@@ -52,7 +52,7 @@ public class IdeServiceImpl implements IdeService {
     
     @Override
     @Transactional(readOnly = true)
-    public Page<CodingProblem> getProblems(CodingProblem.Difficulty difficulty, String category, Pageable pageable) {
+    public Page<CodingProblem> getProblems(Integer difficulty, String category, Pageable pageable) {
         return problemRepository.findByFilters(difficulty, category, pageable);
     }
     
@@ -95,7 +95,7 @@ public class IdeServiceImpl implements IdeService {
             String inputDescription,
             String outputDescription,
             String constraints,
-            CodingProblem.Difficulty difficulty,
+            Integer difficulty,
             List<String> categories,
             Integer timeLimitSeconds,
             Integer memoryLimitMb,

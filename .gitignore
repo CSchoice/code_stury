@@ -177,3 +177,5 @@ backend/remove_all_comments.sh
 .idea
 .vscode
 # Task files
+
+backend/*/baekjoon*.json

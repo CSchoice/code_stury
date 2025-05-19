@@ -19,7 +19,7 @@ public interface CodingProblemRepository extends JpaRepository<CodingProblem, Lo
            "(:difficulty IS NULL OR p.difficulty = :difficulty) AND " +
            "(:category IS NULL OR :category IN (SELECT c FROM p.categories c))")
     Page<CodingProblem> findByFilters(
-            @Param("difficulty") CodingProblem.Difficulty difficulty,
+            @Param("difficulty") Integer difficulty,
             @Param("category") String category,
             Pageable pageable);
     

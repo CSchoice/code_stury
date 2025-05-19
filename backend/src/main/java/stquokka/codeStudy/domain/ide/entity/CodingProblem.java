@@ -39,9 +39,8 @@ public class CodingProblem {
     @Column(columnDefinition = "LONGTEXT")
     private String constraints;
     
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Difficulty difficulty;
+    @Column(name = "difficulty")
+    private Integer difficulty; // 1-30 (백준), 1-3 (프로그래머스)
     
     @Column(name = "time_limit_seconds", nullable = false)
     private Integer timeLimitSeconds;
@@ -85,7 +84,7 @@ public class CodingProblem {
         this.updatedAt = LocalDateTime.now();
     }
     
-    public enum Difficulty {
-        EASY, MEDIUM, HARD, VERY_HARD
-    }
+    // 난이도 수치 매핑
+    // 백준: solved.ac 기준 1-30
+    // 프로그래머스: 1(EASY), 2(MEDIUM), 3(HARD)
 }

@@ -39,7 +39,7 @@ public class CodingProblemController {
     @Operation(summary = "문제 목록 조회", description = "코딩 문제 목록을 페이지네이션으로 조회합니다")
     @GetMapping
     public ResponseEntity<CommonResponse<Page<ProblemResponse>>> getProblems(
-            @RequestParam(required = false) CodingProblem.Difficulty difficulty,
+            @RequestParam(required = false) Integer difficulty,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String keyword,
             Pageable pageable) {
@@ -54,7 +54,7 @@ public class CodingProblemController {
         Page<ProblemResponse> response = problems.map(p -> ProblemResponse.builder()
                 .id(p.getId())
                 .title(p.getTitle())
-                .difficulty(p.getDifficulty().name())
+                .difficulty(String.valueOf(p.getDifficulty()))
                 .categories(p.getCategories())
                 .build());
         
@@ -84,7 +84,7 @@ public class CodingProblemController {
                 .inputDescription(problem.getInputDescription())
                 .outputDescription(problem.getOutputDescription())
                 .constraints(problem.getConstraints())
-                .difficulty(problem.getDifficulty().name())
+                .difficulty(String.valueOf(problem.getDifficulty()))
                 .categories(problem.getCategories())
                 .timeLimitSeconds(problem.getTimeLimitSeconds())
                 .memoryLimitMb(problem.getMemoryLimitMb())
@@ -109,7 +109,7 @@ public class CodingProblemController {
                 request.getInputDescription(),
                 request.getOutputDescription(),
                 request.getConstraints(),
-                CodingProblem.Difficulty.valueOf(request.getDifficulty()),
+                Integer.valueOf(request.getDifficulty()),
                 request.getCategories(),
                 request.getTimeLimitSeconds(),
                 request.getMemoryLimitMb(),

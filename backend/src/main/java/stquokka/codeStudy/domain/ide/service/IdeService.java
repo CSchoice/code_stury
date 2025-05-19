@@ -17,14 +17,14 @@ import java.util.List;
 public interface IdeService {
     
     // 코딩 문제 관련 기능
-    Page<CodingProblem> getProblems(CodingProblem.Difficulty difficulty, String category, Pageable pageable);
+    Page<CodingProblem> getProblems(Integer difficulty, String category, Pageable pageable);
     Page<CodingProblem> searchProblems(String keyword, Pageable pageable);
     CodingProblem getProblem(Long problemId);
     List<TestCase> getSampleTestCases(Long problemId);
     List<TestCase> getPublicTestCases(Long problemId);
     List<TestCase> getAllTestCases(Long problemId);
     CodingProblem createProblem(String title, String description, String inputDescription, String outputDescription, 
-                                String constraints, CodingProblem.Difficulty difficulty, List<String> categories, 
+                                String constraints, Integer difficulty, List<String> categories, 
                                 Integer timeLimitSeconds, Integer memoryLimitMb, String sampleCode);
     TestCase createTestCase(Long problemId, String input, String expectedOutput, boolean isSample, 
                             boolean isHidden, String explanation, Integer testNumber);
